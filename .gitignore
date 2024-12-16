@@ -4,9 +4,15 @@ logs
 **/*.backup.*
 **/*.back.*
 
+node_modules
+node_modules/
+node_modules/*
 */node_modules
 */node_modules/
 */bower_components
+out
+out/
+out/*
 */out
 */out/*
 
@@ -15,4 +21,3 @@ logs
 psd
 thumb
 sketch
-node_modules
