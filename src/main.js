@@ -95,12 +95,29 @@ const modeChanger = () => {
 const changeAppMode = () => {
     /* min사이즈 제한 변경 */
     window.setMinimumSize(720, 540);
-    /* 윈도우 사이즈 변경 */
-    window.setSize(1024, 768);
-    /* 윈도우 center */
-    window.center(true);
+
     /* 윈도우 비율 고정 해제  */
     window.setAspectRatio(0);
+
+    /* 화면 정보 가져오기 (PIP 모드였던 모니터 기준) */
+    const currentBounds = window.getBounds();
+    const primaryDisplay = screen.getDisplayNearestPoint({
+        x: currentBounds.x,
+        y: currentBounds.y,
+    });
+
+    /* 해당 모니터의 중앙 좌표 계산 */
+    const { width, height, x, y } = primaryDisplay.workArea;
+    const centerX = x + (width - 1024) / 2;
+    const centerY = y + (height - 768) / 2;
+
+    /* 윈도우 위치를 중앙으로 설정 */
+    window.setBounds({
+        x: Math.round(centerX),
+        y: Math.round(centerY),
+        width: 1024,
+        height: 768,
+    });
 
     window.setAlwaysOnTop(false, "normal", 0);
 }
@@ -110,23 +127,28 @@ const changeAppMode = () => {
 const changePipMode = () => {
     /* min사이즈 제한 변경 */
     window.setMinimumSize(pipWindowSize.width, pipWindowSize.height);
-    /* 윈도우 사이즈 변경 */
-    window.setSize(pipWindowSize.width, pipWindowSize.height);
+
     /* 윈도우 center 해제 */
     window.center(false);
+
     /* 윈도우 비율 고정  */
     window.setAspectRatio(pipWindowSize.width / pipWindowSize.height);
 
-    /* 화면 정보 가져와서 오른쪽 하단 위치 계산 */
-    const primaryDisplay = screen.getPrimaryDisplay(); // 메인화면 정보 가져오기
-    const { width, height } = primaryDisplay.workAreaSize; // 화면의 작업 영역 크기
+    /* 화면 정보 가져오기 (현재 윈도우가 있는 모니터 기준) */
+    const currentBounds = window.getBounds();
+    const currentDisplay = screen.getDisplayNearestPoint({
+        x: currentBounds.x,
+        y: currentBounds.y,
+    });
 
-    const x = width - pipWindowSize.width * 1.1; // right 90% (10% 여백)
-    const y = height - pipWindowSize.height * 1.1; // bottom 90% (10% 여백)
+    /* 해당 모니터의 작업 영역 크기를 가져와서 오른쪽 하단 좌표 계산 */
+    const { width, height, x, y } = currentDisplay.workArea;
+    const pipX = x + width - pipWindowSize.width * 1.1; // 오른쪽 끝에서 10% 여백
+    const pipY = y + height - pipWindowSize.height * 1.1; // 아래쪽 끝에서 10% 여백
 
     window.setBounds({
-        x: Math.round(x),
-        y: Math.round(y),
+        x: Math.round(pipX),
+        y: Math.round(pipY),
         width: pipWindowSize.width,
         height: pipWindowSize.height,
     });
