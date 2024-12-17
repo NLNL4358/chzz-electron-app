@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, screen } = require("electron");
+const { app, BrowserWindow, Menu, screen, ipcMain } = require("electron");
 const path = require('path')
 
 /*** 변수 */
@@ -60,8 +60,9 @@ const createWindow = () => {
         minWidth: 720,
         minHeight: 540,
         webPreferences: {
-            nodeIntegration: true,  //Node 기반 라이브러리를 사용하신다면, 꼭 true로 설정
-            contextIsolation: false,
+            preload: path.join(__dirname, "preload.js"), // preload.js 파일 경로
+            nodeIntegration: false,  // 보안상 이유로 false
+            contextIsolation: true, // ipcAPI를 사용하기 위해 true로 선언!
         },
         autoHideMenuBar: true,  // 앱 메뉴바 hide - T,F
 
@@ -166,4 +167,10 @@ app.whenReady().then(() => {
 })
 app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') app.quit()
+})
+
+
+/*** IPC - Event - handler  " React와 Electron의 소통 "*/
+ipcMain.on("change-pip-mode", () => {
+    modeChanger();
 })

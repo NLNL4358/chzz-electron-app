@@ -15,7 +15,7 @@
 .developNoteWrap {
     position: fixed;
     right: 0;
-    bottom: 0;
+    top: 0;
 
     gap: 0.5rem;
 
@@ -25,6 +25,9 @@
     align-items: flex-end;
 
     pointer-events: none;
+
+    transform: scale(0.7);
+    opacity: 0.3;
 }
 
 .developNote {

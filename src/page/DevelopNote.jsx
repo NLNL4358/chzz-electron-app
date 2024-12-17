@@ -11,6 +11,14 @@ function DevelopNote() {
                     Ctrl + Shift + I
                 </span>
             </div>
+            <div className="developNote">
+                <p>
+                    Pip모드 Switch
+                </p>
+                <span>
+                    Ctrl + Shift + P
+                </span>
+            </div>
         </div>
     )
 }
