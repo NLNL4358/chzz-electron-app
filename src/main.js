@@ -3,7 +3,10 @@ const path = require('path')
 
 /*** 변수 */
 let window; /* 윈도우는 전역변수로 만들어 menu에서 접근 가능하도록 설정 */
-let pipWindowSize = {
+let pipToggle = false;  /* 핍모드 toggle */
+
+/*** 상수  */
+const pipWindowSize = {
     width: 370,
     height: 290,
 };
@@ -30,20 +33,19 @@ const NLMenu = [
         submenu: [
             {
                 label: "Pip Mode",
+                accelerator: "Ctrl+Shift+P",
                 click: () => {
-                    changePipMode();
+                    modeChanger();
                 }
             },
             {
                 type: "separator",
             },
             {
-                label: "Reset Preferences",
+                label: "Developer",             // 개발자모드
+                accelerator: "Ctrl+Shift+I",    // 단축키 설정
                 click: () => {
-                    window.webContents.executeJavaScript(`
-                        localStorage.clear();
-                        window.location.reload();
-                    `);
+                    window.webContents.toggleDevTools(); // 개발자 도구 열기/닫기
                 }
             }
         ],
@@ -61,13 +63,50 @@ const createWindow = () => {
             nodeIntegration: true,  //Node 기반 라이브러리를 사용하신다면, 꼭 true로 설정
             contextIsolation: false,
         },
-        autoHideMenuBar: false,  // 앱 메뉴바 visible - T,F
+        autoHideMenuBar: true,  // 앱 메뉴바 hide - T,F
 
         center: true,           // 앱 실행 시 윈도우 가운데 위치 - T,F
-        alwaysOnTop: true,      // 윈도우를 다른 창들 위에 항상 유지 - T,F
+        // alwaysOnTop: true,      // 윈도우를 다른 창들 위에 항상 유지 - T,F
     })
     window.loadURL("http://localhost:3000")
 }
+
+/**
+ * pipToggle을 변경하며 pip모드와 app모드를 오고가게 하는 함수
+ */
+const modeChanger = () => {
+    pipToggle = !pipToggle
+    switch (pipToggle) {
+        case true:
+            changePipMode()
+            break
+        case false:
+            changeAppMode()
+            break
+        default:
+            changeAppMode()
+            break
+    }
+}
+
+/**
+ * @description - 일반 모드로 변경함수
+ */
+const changeAppMode = () => {
+    /* min사이즈 제한 변경 */
+    window.setMinimumSize(720, 540);
+    /* 윈도우 사이즈 변경 */
+    window.setSize(1024, 768);
+    /* 윈도우 center */
+    window.center(true);
+    /* 윈도우 비율 고정 해제  */
+    window.setAspectRatio(0);
+
+    window.setAlwaysOnTop(false, "normal", 0);
+}
+/**
+ * @description - Pip 모드로 변경함수
+ */
 const changePipMode = () => {
     /* min사이즈 제한 변경 */
     window.setMinimumSize(pipWindowSize.width, pipWindowSize.height);
