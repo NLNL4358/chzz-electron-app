@@ -20,7 +20,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron": "wait-on http://127.0.0.1:3000 && electron-forge start",
+    "electron": "wait-on http://127.0.0.1:54581 && electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make"
   },

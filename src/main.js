@@ -69,7 +69,7 @@ const createWindow = () => {
         center: true,           // 앱 실행 시 윈도우 가운데 위치 - T,F
         // alwaysOnTop: true,      // 윈도우를 다른 창들 위에 항상 유지 - T,F
     })
-    window.loadURL("http://localhost:3000")
+    window.loadURL("http://localhost:54581")
 }
 
 /**
