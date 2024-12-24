@@ -4,13 +4,20 @@
     background-color: var(--background-dark);
 
     position: relative;
+
+    padding: 30px;
 }
 
+.header {
+    -webkit-app-region: drag;
+    width: 100vw;
+    height: 30px;
+    background: white;
 
-
-
-
-
+    position: fixed;
+    top: 0;
+    left: 0;
+}
 
 .developNoteWrap {
     position: fixed;

@@ -1,0 +1,74 @@
+1.추천 채널은 딱히 로그인하지않아도 Get으로 가져올 수 있음 채널 아이디, 채널 이미지
+https://api.chzzk.naver.com/service/v1/home/recommendation-channels
+
+{
+    "code": 200,
+    "message": null,
+    "content": {
+        "recommendationChannels": [
+            {
+                "channelId": "516937b5f85cbf2249ce31b0ad046b0f",
+                "channel": {
+                    "channelId": "516937b5f85cbf2249ce31b0ad046b0f",
+                    "channelName": "아오쿠모 린",
+                    "channelImageUrl": "https://nng-phinf.pstatic.net/MjAyNDA1MTVfMTUx/MDAxNzE1NzU5NDAyNjMw._KFvKTGvQ4J7L6G9zutnjrNpN3GxLRE7MNnxZ8AFwjkg.ssr7rO32NC1SPIZcGlRT2An_b8LvQHxwGAuEdtm1nXEg.PNG/STELLIVE_%EB%A6%B0.png",
+                    "verifiedMark": true,
+                    "activatedChannelBadgeIds": []
+                },
+                "streamer": {
+                    "openLive": true
+                },
+                "liveInfo": {
+                    "liveTitle": "메리 스텔라 이브~ ^^",
+                    "concurrentUserCount": 4488,			// 시청인원
+                    "liveCategoryValue": "구스 구스 덕"
+                },
+                "contentLineage": "{\"contentSource\":\"RCMD\",\"contentType\":\"CHANNEL_NAVIGATION__RECOMMENDED_CHANNEL\",\"contentTag\":\"{\\\"internal\\\":\\\"zQO12Apal-SdvZX4TO2qd0aaJqS1gSmHB992IBmrgjpl_vNFqnbxtmjjqoebegPYutk7xByqwat5PJvZ1UTb5rDeDxCEq7NsHFv6zJDQ-5JQp7BRrMtHqxsAnf7Fsiyblw-yvg6iIM4e-PCj4ZUZMlthY-g17WA6eedn4pw2ZGE\\\",\\\"external\\\":{\\\"apiRequestKey\\\":\\\"67f32740-bf60-4eb7-b530-59a5673f71aa\\\"}}\"}"
+            },
+	
+	...
+
+
+*채널ID 를 이용해서 
+https://chzzk.naver.com/live/516937b5f85cbf2249ce31b0ad046b0f << 일로가면 생방보는거임
+
+2. 팔로잉 채널은 로그인 하지않으면 보이지않음, 로그인 해야 보임
+https://api.chzzk.naver.com/service/v1/channels/followings?page=0&size=505&sortType=FOLLOW
+	2.1 ) 로그인 안하면
+		{"code":401,"message":"권한이 없습니다."}
+	2.2 로그인 하면
+		{
+  		 "code":200,
+  		 "message":null,
+   		"content":{
+   		   "totalCount":38,
+   		   "totalPage":1,
+    		  "followingList":[
+  		       {
+		            "channelId":"17aa057a8248b53affe30512a91481f5",
+		            "channel":{
+		               "channelId":"17aa057a8248b53affe30512a91481f5",
+		               "channelName":"김도",
+		               "channelImageUrl":"https://nng-phinf.pstatic.net/MjAyMzEyMDdfMjA5/MDAxNzAxODc1Mzk0Njgz.4jdg2LkiZM_r-GCnzaLv89BkTh-sWLdYjuYcf_t3IP4g.KhoU7pv7Vk5K4QPKX361Cv7VblSE4LXV5NwjgWETEGkg.PNG/%ED%94%84%EC%82%AC.png",
+		               "verifiedMark":true,				// 닉네임옆에 붙는 녹색뱃지
+		               "activatedChannelBadgeIds":[
+		                  
+		               ],
+		               "personalData":{
+		                  "following":{
+		                     "following":true,
+		                     "notification":false,
+		                     "followDate":"2024-01-07 16:03:01"
+		                  },
+		                  "privateUserBlock":false
+		               }
+		            },
+		            "streamer":{
+		               "openLive":true					// 생방 중 true 아니면 false
+		            },
+		            "liveInfo":{
+		               "liveTitle":"도로롱 10시간 챌린지",
+		               "concurrentUserCount":5224,			// 생방 인원
+		               "liveCategoryValue":"talk"
+		            }
+		         },

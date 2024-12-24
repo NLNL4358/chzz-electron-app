@@ -1,58 +1,76 @@
-const { app, BrowserWindow, Menu, screen, ipcMain } = require("electron");
-const path = require('path')
+const { app, BrowserWindow, Menu, screen, ipcMain } = require('electron');
+const express = require('express');
+const path = require('path');
 
 /*** 변수 */
 let window; /* 윈도우는 전역변수로 만들어 menu에서 접근 가능하도록 설정 */
-let pipToggle = false;  /* 핍모드 toggle */
+let pipToggle = false; /* 핍모드 toggle */
 
 /*** 상수  */
 const pipWindowSize = {
     width: 370,
     height: 290,
 };
-
+const localPort = 54581;
 
 // custom 메뉴 만들기
 const NLMenu = [
     {
-        label: "about",
+        label: 'about',
         submenu: [
             {
-                role: "about",
+                role: 'about',
             },
             {
-                type: "separator",
+                type: 'separator',
             },
             {
-                role: "quit",
+                role: 'quit',
             },
         ],
     },
     {
-        label: "mode",
+        label: 'mode',
         submenu: [
             {
-                label: "Pip Mode",
-                accelerator: "Ctrl+Shift+P",
+                label: 'Pip Mode',
+                accelerator: 'Ctrl+Shift+P',
                 click: () => {
                     modeChanger();
-                }
+                },
             },
             {
-                type: "separator",
+                type: 'separator',
             },
             {
-                label: "Developer",             // 개발자모드
-                accelerator: "Ctrl+Shift+I",    // 단축키 설정
+                label: 'Developer', // 개발자모드
+                accelerator: 'Ctrl+Shift+I', // 단축키 설정
                 click: () => {
                     window.webContents.toggleDevTools(); // 개발자 도구 열기/닫기
-                }
-            }
+                },
+            },
         ],
     },
 ];
 
 /*** Function */
+const startServer = () => {
+    const server = express();
+
+    // React 빌드된 파일의 경로 지정
+    server.use(express.static(path.join(__dirname, '../build')));
+
+    // 기본 경로로 들어왔을 때 React의 index.html 반환
+    server.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, '../build/index.html'));
+    });
+
+    // 서버 시작
+    server.listen(localPort, () => {
+        console.log(`React build served at http://localhost:${localPort}`);
+    });
+};
+
 const createWindow = () => {
     window = new BrowserWindow({
         width: 1024,
@@ -60,35 +78,36 @@ const createWindow = () => {
         minWidth: 720,
         minHeight: 540,
         webPreferences: {
-            preload: path.join(__dirname, "preload.js"), // preload.js 파일 경로
-            nodeIntegration: false,  // 보안상 이유로 false
+            preload: path.join(__dirname, 'preload.js'), // preload.js 파일 경로
+            nodeIntegration: false, // 보안상 이유로 false
             contextIsolation: true, // ipcAPI를 사용하기 위해 true로 선언!
         },
-        autoHideMenuBar: true,  // 앱 메뉴바 hide - T,F
-
-        center: true,           // 앱 실행 시 윈도우 가운데 위치 - T,F
+        autoHideMenuBar: true, // 앱 메뉴바 hide - T,F
+        frame: false,
+        center: true, // 앱 실행 시 윈도우 가운데 위치 - T,F
         // alwaysOnTop: true,      // 윈도우를 다른 창들 위에 항상 유지 - T,F
-    })
-    window.loadURL("http://localhost:54581")
-}
+    });
+    const startURL = `http://localhost:${localPort}`;
+    window.loadURL(startURL);
+};
 
 /**
  * pipToggle을 변경하며 pip모드와 app모드를 오고가게 하는 함수
  */
 const modeChanger = () => {
-    pipToggle = !pipToggle
+    pipToggle = !pipToggle;
     switch (pipToggle) {
         case true:
-            changePipMode()
-            break
+            changePipMode();
+            break;
         case false:
-            changeAppMode()
-            break
+            changeAppMode();
+            break;
         default:
-            changeAppMode()
-            break
+            changeAppMode();
+            break;
     }
-}
+};
 
 /**
  * @description - 일반 모드로 변경함수
@@ -120,8 +139,8 @@ const changeAppMode = () => {
         height: 768,
     });
 
-    window.setAlwaysOnTop(false, "normal", 0);
-}
+    window.setAlwaysOnTop(false, 'normal', 0);
+};
 /**
  * @description - Pip 모드로 변경함수
  */
@@ -155,22 +174,23 @@ const changePipMode = () => {
     });
 
     /* 윈도우를 항상 위에 표시 */
-    window.setAlwaysOnTop(true, "floating", 1);
-}
-
+    window.setAlwaysOnTop(true, 'floating', 1);
+};
 
 /*** init */
 app.whenReady().then(() => {
+    if (app.isPackaged) {
+        startServer(); // 배포 시 Express 서버 시작
+    }
     createWindow();
     const customMenu = Menu.buildFromTemplate(NLMenu);
     Menu.setApplicationMenu(customMenu);
-})
+});
 app.on('window-all-closed', function () {
-    if (process.platform !== 'darwin') app.quit()
-})
-
+    if (process.platform !== 'darwin') app.quit();
+});
 
 /*** IPC - Event - handler  " React와 Electron의 소통 "*/
-ipcMain.on("change-pip-mode", () => {
+ipcMain.on('change-pip-mode', () => {
     modeChanger();
-})
+});
