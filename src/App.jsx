@@ -6,17 +6,14 @@ import './css/reset.css';
 import DevelopNote from './page/DevelopNote';
 
 /* Component */
-import PipModeButton from './component/PipModeButton';
 import Header from './component/Header';
+import LeftMenu from './page/LeftMenu';
 
 function App() {
     return (
         <div className="App">
             <Header></Header>
-            <h1>TEST</h1>
-
-            <PipModeButton />
-
+            <LeftMenu />
             <DevelopNote />
         </div>
     );

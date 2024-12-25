@@ -1,9 +1,11 @@
 const { app, BrowserWindow, Menu, screen, ipcMain } = require('electron');
 const express = require('express');
 const path = require('path');
+const dotenv = require('dotenv');
 
 /*** 변수 */
 let window; /* 윈도우는 전역변수로 만들어 menu에서 접근 가능하도록 설정 */
+let naverLoginWindow; /* 네이버 로그인용 윈도우 */
 let pipToggle = false; /* 핍모드 toggle */
 
 /*** 상수  */
@@ -12,6 +14,7 @@ const pipWindowSize = {
     height: 290,
 };
 const localPort = 54581;
+dotenv.config(); // env 파일 main.js에서도 쓰도록 불러오기
 
 // custom 메뉴 만들기
 const NLMenu = [
@@ -177,6 +180,66 @@ const changePipMode = () => {
     window.setAlwaysOnTop(true, 'floating', 1);
 };
 
+const openNaverLoginWindow = () => {
+    const naverClientId = process.env.REACT_APP_NAVER_CLIENT_ID;
+    const redirectUrl = `http://localhost:${process.env.REACT_APP_PORT}`;
+    const naverAuthUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${naverClientId}&state=flase&redirect_uri=${redirectUrl}`;
+
+    // 새로운 BrowserWindow 생성
+    naverLoginWindow = new BrowserWindow({
+        width: 600,
+        height: 650,
+        resizable: false,
+        frame: true,
+        parent: window, // 메인 창을 부모로 설정
+        modal: true, // 모달 창으로 설정
+        autoHideMenuBar: true, // 앱 메뉴바 hide - T,F
+        frame: false,
+        webPreferences: {
+            nodeIntegration: false, // 보안상 false
+            contextIsolation: true, // ipc 사용 시 필요
+        },
+    });
+
+    // 로그인 URL 로드
+    naverLoginWindow.loadURL(naverAuthUrl);
+
+    // 로그인 창의 `will-redirect` 이벤트를 감지하여 처리
+    naverLoginWindow.webContents.on('will-redirect', (event, url) => {
+        event.preventDefault();
+
+        // 로그인 완료 처리 로직
+        const urlParams = new URL(url).searchParams;
+        const authCode = urlParams.get('oauth_token');
+        const state = urlParams.get('state');
+        console.log(
+            'urlParams : ',
+            urlParams,
+            'authCode : ',
+            authCode,
+            'state : ',
+            state,
+        );
+
+        if (authCode) {
+            window.webContents.send('auth-success', {
+                accessToken: authCode,
+            });
+        }
+
+        // 로그인 창 닫기
+        if (naverLoginWindow) {
+            naverLoginWindow.close();
+            naverLoginWindow = null;
+        }
+    });
+
+    // 로그인 창이 닫힐 때 처리
+    naverLoginWindow.on('closed', () => {
+        naverLoginWindow = null;
+    });
+};
+
 /*** init */
 app.whenReady().then(() => {
     if (app.isPackaged) {
@@ -186,11 +249,14 @@ app.whenReady().then(() => {
     const customMenu = Menu.buildFromTemplate(NLMenu);
     Menu.setApplicationMenu(customMenu);
 });
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
 });
 
 /*** IPC - Event - handler  " React와 Electron의 소통 "*/
 ipcMain.on('change-pip-mode', () => {
     modeChanger();
+});
+ipcMain.on('open-naver-login', () => {
+    openNaverLoginWindow();
 });
