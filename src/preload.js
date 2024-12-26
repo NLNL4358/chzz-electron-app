@@ -13,8 +13,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
     openNaverLoginWindow: () => ipcRenderer.send('open-naver-login'),
 
     /**
-     * @return NAVER로그인 결과 수신
+     * @return NAVER get access-token
      */
     onAuthSuccess: (callback) =>
-        ipcRenderer.on('auth-success', (_, userInfo) => callback(userInfo)),
+        ipcRenderer.on('auth-success', (_, accessToken) =>
+            callback(accessToken),
+        ),
 });
