@@ -181,7 +181,7 @@ const changePipMode = () => {
 };
 
 const openNaverLoginWindow = () => {
-    const naverClientId = '_hmVVnvtB0bPAc6HaaZz';
+    const naverClientId = process.env.REACT_APP_NAVER_CLIENT_ID;
     const redirectUrl = `http://localhost:${process.env.REACT_APP_PORT}`;
     const naverAuthUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${naverClientId}&state=flase&redirect_uri=${redirectUrl}`;
 
