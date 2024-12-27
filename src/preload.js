@@ -16,7 +16,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
      * @return NAVER get access-token
      */
     onAuthSuccess: (callback) =>
-        ipcRenderer.on('auth-success', (_, accessToken) =>
-            callback(accessToken),
-        ),
+        ipcRenderer.on('auth-success', (_, code) => callback(code)),
 });

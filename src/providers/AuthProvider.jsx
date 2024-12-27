@@ -8,6 +8,8 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
     /*** 상수 */
+    const supabaseGetTokenURL =
+        'https://ykorbmtrpjhatgnhbjbp.supabase.co/functions/v1/get-naver-token'; // code를 이용해서 Token 요청 코드 supabase Function 요청 URL
     const supabaseUserInfoURL =
         'https://ykorbmtrpjhatgnhbjbp.supabase.co/functions/v1/get-user-info'; // 유저정보 가저오는 supabase Function 요청 URL
 
@@ -29,7 +31,9 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const getUserInfo = async (accessToken) => {
+    const getUserInfo = async (code) => {
+        const accessToken = await getAccessToken(code);
+
         fetch(`${supabaseUserInfoURL}?accessToken=${accessToken}`, {
             method: 'GET',
             headers: {
@@ -48,6 +52,24 @@ export const AuthProvider = ({ children }) => {
             .catch((error) => console.error(error));
     };
 
+    const getAccessToken = async (code) => {
+        const response = await fetch(`${supabaseGetTokenURL}?code=${code}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:
+                    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlrb3JibXRycGpoYXRnbmhiamJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU4NDg1NTMsImV4cCI6MjA0MTQyNDU1M30.BMF7MCmJIcjHmv1OTpbwSyLd23iz4FrMa1cDtQxa5dc',
+            },
+        });
+
+        const data = await response.json();
+        if (data.accessToken) {
+            return data.accessToken;
+        } else {
+            throw new Error('Failed to get access token from Supabase');
+        }
+    };
+
     /*** returnValue */
     const value = {
         loginStatus,
@@ -64,8 +86,8 @@ export const AuthProvider = ({ children }) => {
             //     userName: userInfo.userName,
             // });
             console.log('Received Response', response);
-            if (response?.accessToken) {
-                getUserInfo(response.accessToken);
+            if (response?.code) {
+                getUserInfo(response.code);
             } else {
                 alert('Get User Access Token Error');
             }

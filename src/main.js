@@ -181,7 +181,7 @@ const changePipMode = () => {
 };
 
 const openNaverLoginWindow = () => {
-    const naverClientId = process.env.REACT_APP_NAVER_CLIENT_ID;
+    const naverClientId = '_hmVVnvtB0bPAc6HaaZz';
     const redirectUrl = `http://localhost:${process.env.REACT_APP_PORT}`;
     const naverAuthUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${naverClientId}&state=flase&redirect_uri=${redirectUrl}`;
 
@@ -194,7 +194,7 @@ const openNaverLoginWindow = () => {
         parent: window, // 메인 창을 부모로 설정
         modal: true, // 모달 창으로 설정
         autoHideMenuBar: true, // 앱 메뉴바 hide - T,F
-        frame: false,
+        frame: true,
         webPreferences: {
             nodeIntegration: false, // 보안상 false
             contextIsolation: true, // ipc 사용 시 필요
@@ -223,7 +223,7 @@ const openNaverLoginWindow = () => {
 
         if (authCode) {
             window.webContents.send('auth-success', {
-                accessToken: authCode,
+                code: authCode,
             });
         }
 
