@@ -13,6 +13,11 @@ function Header() {
                 />
                 <span>치지직 플레이어</span>
             </div>
+            <div className="headerR">
+                <button className="programCloseButton">
+                    <img src={`${publicUrl}/icon/turnOffIcon.png`} alt="" />
+                </button>
+            </div>
         </div>
     );
 }

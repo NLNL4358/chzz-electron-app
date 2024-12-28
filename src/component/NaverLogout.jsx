@@ -1,21 +1,20 @@
 import React from 'react';
 import { useAuth } from '../providers/AuthProvider';
 
-function NaverLogin() {
-    const { naverLogin } = useAuth();
-
+function NaverLogout() {
+    const { naverLogout } = useAuth();
     return (
-        <div>
+        <div className="logoutWrap">
             <button
                 className="loginButton"
                 onClick={() => {
-                    naverLogin();
+                    naverLogout();
                 }}
             >
-                로그인
+                로그아웃
             </button>
         </div>
     );
 }
 
-export default NaverLogin;
+export default NaverLogout;

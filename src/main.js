@@ -1,4 +1,11 @@
-const { app, BrowserWindow, Menu, screen, ipcMain } = require('electron');
+const {
+    app,
+    BrowserWindow,
+    Menu,
+    screen,
+    ipcMain,
+    session,
+} = require('electron');
 const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv');
